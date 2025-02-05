@@ -1,6 +1,6 @@
 #!/bin/python3
 
-# will clean all of this up with time
+# will clean all of this up with time + documentation + redo the read me + make it work
 
 import subprocess
 import math
@@ -45,13 +45,29 @@ def ping_that_port(ip, port):
     # Given a 3 second timeout (similar to above), or another connection error, it will return None
     except (socket.timeout, ConnectionRefusedError):
         return None
+    
+def parse_dem_ports(port_string):
+    ports = set()
+    try:
+        if "," in port_string:
+            ports.update(int(p) for p in port_string.split(","))
+        
+        if "-" in port_string:
+            start, end = map(int, port_string.split("-"))
+            ports.update(range(start, end + 1))
+
+        else:
+            ports.add(int(port_string))
+        
+        return sorted(ports)
+
+    except ValueError:
+        raise argparse.ArgumentTypeError("Please provide a valid port format. Ex: -p 80, -p 80,120,127, -p 1-100")
 
 # LETS THROW IT ALL TOGETHER
 def main():
-    # Switch from sys to argparse for this part
-    # flag = sys.argv[1]
-    # port = sys.argv[2]
-    # cidr = sys.argv[3]
+
+    # Uses argparse to handle passed arguments
     parser = argparse.ArgumentParser
     parser.add_argument("cidr")
     parser.add_argument("-p", "--ports")
@@ -71,9 +87,7 @@ def main():
     print(f"Scanning network {parser.cidr}...")
     print(f"Total number of found hosts: {netwrk.num_addresses - 2} (not including network and broadcast hosts)")
 
-    # Basically make a list of the up hosts and then scan the ports under it
-    # So if the host is up use ping_that_port and then output them all yk
-    # Can use this (below) should -p not be passed
+    up_hosts= []
 
     # Begins to iterate through each ip found in the range
     for ip in netwrk.hosts():
@@ -82,11 +96,19 @@ def main():
 
         # If the host is up it will return this
         if status == "UP":
-            print(f"{ip}: {status} [Response Time: {response_time} ms]")
+            up_hosts.append(str(ip))
+            print(f"[+] {ip}: {status} [Response Time: {response_time} ms]")
         
         # If the host is down it will return this instead
         else:
-            print(f"{ip}: {status} [Error: {error}]")
+            print(f"[-] {ip}: {status} [Error: {error}]")
+
+    if args.ports and up_hosts:
+        print ("\nScanning open ports on online(UP) hosts...")
+        for ip in up_hosts:
+            for port in args.ports:
+                if ping_that_port(ip, port):
+                    print ("[OPEN] {ip}: {port}")
 
     sys.exit(0)
 
