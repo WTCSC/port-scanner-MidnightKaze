@@ -31,4 +31,4 @@ So maybe you want to not only scan a network range, but you also want to scan fo
 
 To use it, alter the original command to look like this:
 
-- `python3 scanner.py -p [port(s)] [CIDR address]` For a single port, simply type in the port number like this `-p 80`. For a ports, seperate each port like a comma like this `-p 80,120,127`. And for a port range, denote it with a hyphen like this `80-120`.
+- `python3 scanner.py -p [port(s)] [CIDR address]` For a single port, simply type in the port number like this `-p 80`. For a ports, seperate each port like a comma like this `-p 80,120,127`. And for a port range, denote it with a hyphen like this `-p 80-120`. You can also use `--ports` in place of `-p`.
