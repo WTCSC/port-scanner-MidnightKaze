@@ -38,26 +38,25 @@ def ping_that_ip(ip):
 def ping_that_port(ip, port):
     try:
         # Will attempt to reach the desired port
-        with socket.create_connection((ip, port), timeout=3):
+        with socket.create_connection((ip, port), timeout=1):
             # Will return the port if it was reached
             return port
     
-    # Given a 3 second timeout (similar to above), or another connection error, it will return None
+    # Given a 1 second timeout (similar to above), or another connection error, it will return None
     except (socket.timeout, ConnectionRefusedError):
         return None
     
 def parse_dem_ports(port_string):
     ports = set()
     try:
-        if "," in port_string:
-            ports.update(int(p) for p in port_string.split(","))
-        
-        if "-" in port_string:
-            start, end = map(int, port_string.split("-"))
-            ports.update(range(start, end + 1))
+        for port in port_string.split(","):
+            
+            if "-" in port:
+                start, end = map(int, port.split("-"))
+                ports.update(range(start, end + 1))
 
-        else:
-            ports.add(int(port_string))
+            else:
+                ports.add(int(port))
         
         return sorted(ports)
 
@@ -68,7 +67,7 @@ def parse_dem_ports(port_string):
 def main():
 
     # Uses argparse to handle passed arguments
-    parser = argparse.ArgumentParser
+    parser = argparse.ArgumentParser()
     parser.add_argument("cidr")
     parser.add_argument("-p", "--ports")
     
@@ -76,7 +75,7 @@ def main():
 
     # This will basically just check that a valid IP Address and will return the respective network for the address
     try:
-        netwrk = ipaddress.ip_network(parser.cidr, strict=True)
+        netwrk = ipaddress.ip_network(args.cidr, strict=True)
     
     # Should strict turn to False, it will return the ValueError and return the error message to the user
     except ValueError as e:
@@ -84,7 +83,7 @@ def main():
         sys.exit(1)
 
     # Just some messages for the user
-    print(f"Scanning network {parser.cidr}...")
+    print(f"Scanning network {args.cidr}...")
     print(f"Total number of found hosts: {netwrk.num_addresses - 2} (not including network and broadcast hosts)")
 
     up_hosts= []
@@ -104,11 +103,12 @@ def main():
             print(f"[-] {ip}: {status} [Error: {error}]")
 
     if args.ports and up_hosts:
-        print ("\nScanning open ports on online(UP) hosts...")
+        print ("\nScanning open ports on online (UP) hosts...")
+        ports = parse_dem_ports(args.ports)
         for ip in up_hosts:
-            for port in args.ports:
+            for port in ports:
                 if ping_that_port(ip, port):
-                    print ("[OPEN] {ip}: {port}")
+                    print (f"[OPEN] {ip}: {port}")
 
     sys.exit(0)
 
