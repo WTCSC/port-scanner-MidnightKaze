@@ -119,3 +119,15 @@ def main():
 
 if __name__=="__main__":
     main()
+
+# Change the format so that the ports follow the up hosts or something like that
+# Test this (below) later
+
+"""
+if status == "UP":
+    print(f"[+] {ip}: {status} [Response Time: {response_time} ms]")
+    ports = parse_dem_ports(args.ports)
+    for port in ports:
+        if ping_that_port(ip, port):
+        print (f"[OPEN]: {port}")
+"""
