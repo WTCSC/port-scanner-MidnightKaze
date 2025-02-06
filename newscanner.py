@@ -36,11 +36,11 @@ def ping_that_ip(ip):
 def ping_that_port(ip, port):
     try:
         # Will attempt to reach the desired port
-        with socket.create_connection((ip, port), timeout=1):
+        with socket.create_connection((ip, port), timeout=0.5):
             # Will return the port if it was reached
             return port
     
-    # Given a 1 second timeout (similar to above), or another connection error, it will return None
+    # Given a half second timeout (similar to above), or another connection error, it will return None
     except (socket.timeout, ConnectionRefusedError):
         return None
     
@@ -69,9 +69,9 @@ def parse_dem_ports(port_string):
 def main():
 
     # Uses argparse to handle passed arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument("cidr")
-    parser.add_argument("-p", "--ports")
+    parser = argparse.ArgumentParser(description="Network range and ports to scan.")
+    parser.add_argument("cidr", help="Network range to scan, provided in CIDR format.")
+    parser.add_argument("-p", "--ports", help="Optional port or ports to scan along side the network range.")
     
     args = parser.parse_args()
 
