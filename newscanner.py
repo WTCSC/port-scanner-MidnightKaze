@@ -1,7 +1,5 @@
 #!/bin/python3
 
-# will clean all of this up with time + documentation + redo the read me + make it work
-
 import subprocess
 import math
 import ipaddress
@@ -17,7 +15,7 @@ def ping_that_ip(ip):
     command = ['ping', flag, '1', str(ip)]
     
     try:
-        # Runs the command while also keep track of the times
+        # Runs the command while also keeping track of the times
         start = time.time()
         output = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=3)
         end = time.time()
@@ -27,7 +25,7 @@ def ping_that_ip(ip):
             response_time = math.floor((end-start)*1000) # Returns the number of milliseconds, floored
             return "UP", response_time, None
         
-        # Else wise it will return an error
+        # Else it will return an error
         else:
             return "DOWN", None, output.stderr
     
@@ -49,17 +47,21 @@ def ping_that_port(ip, port):
 def parse_dem_ports(port_string):
     ports = set()
     try:
+        # Splits the ports at a comma if a list of ports is given
         for port in port_string.split(","):
             
+            # Like wise, if a range is given it will map the range instead
             if "-" in port:
                 start, end = map(int, port.split("-"))
                 ports.update(range(start, end + 1))
 
+            # If it's just a single port it will add it to the set as is
             else:
                 ports.add(int(port))
         
         return sorted(ports)
 
+    # Should none of those occur it will ask the user to reformat the input
     except ValueError:
         raise argparse.ArgumentTypeError("Please provide a valid port format. Ex: -p 80, -p 80,120,127, -p 1-100")
 
@@ -102,12 +104,15 @@ def main():
         else:
             print(f"[-] {ip}: {status} [Error: {error}]")
 
+    # If ports were given, then it will look for those ports on up hosts.
     if args.ports and up_hosts:
         print ("\nScanning open ports on online (UP) hosts...")
         ports = parse_dem_ports(args.ports)
+        # For each ip of an up host, it will "ping" the port(s)
         for ip in up_hosts:
             for port in ports:
                 if ping_that_port(ip, port):
+                    # Will only print this if the port is actually open
                     print (f"[OPEN] {ip}: {port}")
 
     sys.exit(0)

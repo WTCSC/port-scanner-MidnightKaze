@@ -25,3 +25,10 @@ There are a few common errors that you might run into while you're using this sc
 3. __[Error: REQUEST TIMED OUT.]__ The script gives each ping three seconds to run. Should the three seconds go by and the ping command is not executed it will time out and reply with this error. Try again, or wait a little bit before attempting it again.
 
     __*With some of these errors, if you run into it and then try it again a little later it will run the right way! Or simply a completely different way. During my testing, one host that would time out could recieve a ping during a test ran 2 minutes later.*__
+
+## Port Scanning Feature
+So maybe you want to not only scan a network range, but you also want to scan for some open ports within the range. Well I got you covered. I added a little something that let's you scan a port, or ports, or a port range along side your network scan! 
+
+To use it, alter the original command to look like this:
+
+- `python3 scanner.py -p [port(s)] [CIDR address]` For a single port, simply type in the port number like this `-p 80`. For a ports, seperate each port like a comma like this `-p 80,120,127`. And for a port range, denote it with a hyphen like this `80-120`.
