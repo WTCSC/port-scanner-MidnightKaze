@@ -36,7 +36,7 @@ def ping_that_ip(ip):
 def ping_that_port(ip, port):
     try:
         # Will attempt to reach the desired port
-        with socket.create_connection((ip, port), timeout=0.5):
+        with socket.create_connection((str(ip), port), timeout=0.5):
             # Will return the port if it was reached
             return port
     
@@ -99,35 +99,19 @@ def main():
         if status == "UP":
             up_hosts.append(str(ip))
             print(f"[+] {ip}: {status} [Response Time: {response_time} ms]")
+            
+            # Will begin trying the given ports (if any are given)
+            if args.ports:
+                ports = parse_dem_ports(args.ports)
+                for port in ports:
+                    if ping_that_port(ip,port):
+                        print(f"    [OPEN] {ip}: {port}")
         
         # If the host is down it will return this instead
         else:
             print(f"[-] {ip}: {status} [Error: {error}]")
 
-    # If ports were given, then it will look for those ports on up hosts.
-    if args.ports and up_hosts:
-        print ("\nScanning open ports on online (UP) hosts...")
-        ports = parse_dem_ports(args.ports)
-        # For each ip of an up host, it will "ping" the port(s)
-        for ip in up_hosts:
-            for port in ports:
-                if ping_that_port(ip, port):
-                    # Will only print this if the port is actually open
-                    print (f"[OPEN] {ip}: {port}")
-
     sys.exit(0)
 
 if __name__=="__main__":
     main()
-
-# Change the format so that the ports follow the up hosts or something like that
-# Test this (below) later
-
-"""
-if status == "UP":
-    print(f"[+] {ip}: {status} [Response Time: {response_time} ms]")
-    ports = parse_dem_ports(args.ports)
-    for port in ports:
-        if ping_that_port(ip, port):
-        print (f"[OPEN]: {port}")
-"""

@@ -15,6 +15,10 @@ To start using the script type this simple command below:
         
     __*Note: If you're just looking to try it out, try `192.168.1.0/24`. It will scan a smaller network range (about 255 hosts in total) than some of the other private ranges. (may not work depending on your machine's ip).*__
 
+An example of this standard output looks like this:
+
+![title](screen_shots/ex2.png)
+
 ## Error Detection and Reply Features
 There are a few common errors that you might run into while you're using this script. Here's a list and a small description of each:
 
@@ -32,3 +36,7 @@ So maybe you want to not only scan a network range, but you also want to scan fo
 To use it, alter the original command to look like this:
 
 - `python3 scanner.py -p [port(s)] [CIDR address]` For a single port, simply type in the port number like this `-p 80`. For a ports, seperate each port like a comma like this `-p 80,120,127`. And for a port range, denote it with a hyphen like this `-p 80-120`. You can also use `--ports` in place of `-p`.
+
+An example of what the output may look like is this:
+
+![title](screen_shots/ex1.png)
